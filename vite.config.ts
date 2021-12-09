@@ -14,4 +14,7 @@ export default defineConfig({
     port: 3001,
   },
   assetsInclude: ["**/*.m4a", "**/*.ac3"],
+  build: {
+    outDir: "docs",
+  },
 });
