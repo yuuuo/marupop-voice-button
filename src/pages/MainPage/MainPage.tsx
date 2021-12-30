@@ -1,15 +1,8 @@
-import React, { useCallback, useEffect, useMemo, memo, useState } from "react";
-import { Box, Grid, IconButton, Slider, Typography } from "@mui/material";
+import { useCallback, useEffect, memo, useState } from "react";
+import { Box, IconButton, Typography } from "@mui/material";
 import {
   MdFullscreen as Fullscreen,
   MdFullscreenExit as FullscreenExit,
-  MdLoop as Loop,
-  MdPlayArrow as PlayArrow,
-  MdRotateLeft as RotateLeft,
-  MdShuffle as Shuffle,
-  MdStop as Stop,
-  MdVolumeDown as VolumeDown,
-  MdVolumeUp as VolumeUp,
 } from "react-icons/md";
 import { useAudio } from "~/hooks/Audio";
 import { useAudioVisualizer } from "~/hooks/AudioVisualizer";
@@ -20,10 +13,11 @@ import ogg from "~/assets/sounds/voice.ogg";
 import m4a from "~/assets/sounds/voice.m4a";
 import mp3 from "~/assets/sounds/voice.mp3";
 import ac3 from "~/assets/sounds/voice.ac3";
-import { ActionButton } from "./ActionButton";
-import { VoiceButton } from "./VoiceButton";
+import { ActionButtonContainer } from "./ActionButtonContainer";
+import { VolumeSlider } from "./VolumeSlider";
+import { VoiceButtonContainer, VoiceType } from "./VoiceButtonContainer";
 
-export const MainPage: React.FC = memo((): JSX.Element => {
+export const MainPage: React.VFC = memo((): JSX.Element => {
   /*****************************
    * Hooks
    *****************************/
@@ -35,7 +29,7 @@ export const MainPage: React.FC = memo((): JSX.Element => {
   const [playingLoopIdList, setPlaingLoopIdList] = useState<number[]>([]);
   const [isLoop, setIsLoop] = useState<boolean>(false);
   const [isAll, setIsAll] = useState<boolean>(false);
-  const [renderOrder, setRenderOrder] = useState<(keyof typeof voiceParts)[]>([
+  const [renderOrder, setRenderOrder] = useState<VoiceType[]>([
     "sankaku",
     "shikaku",
     "maru",
@@ -216,42 +210,6 @@ export const MainPage: React.FC = memo((): JSX.Element => {
     ]
   );
 
-  const voiceParts = useMemo(() => {
-    return {
-      sankaku: (
-        <Grid item key="sankaku">
-          <VoiceButton onClick={handleSankakuClick} text="さんかく" />
-        </Grid>
-      ),
-      shikaku: (
-        <Grid item key="shikaku">
-          <VoiceButton onClick={handleShikakuClick} text="しかく" />
-        </Grid>
-      ),
-      maru: (
-        <Grid item key="maru">
-          <VoiceButton onClick={handleMaruClick} text="まる" />
-        </Grid>
-      ),
-      pop: (
-        <Grid item key="pop">
-          <VoiceButton onClick={handlePopClick} text="ぽっぷ" />
-        </Grid>
-      ),
-      desu: (
-        <Grid item key="desu">
-          <VoiceButton onClick={handleDesuClick} text="です" />
-        </Grid>
-      ),
-    };
-  }, [
-    handleDesuClick,
-    handleMaruClick,
-    handlePopClick,
-    handleSankakuClick,
-    handleShikakuClick,
-  ]);
-
   useEffect(() => {
     removeEvent("end");
     addEvent("end", handleAudioEnd);
@@ -314,11 +272,14 @@ export const MainPage: React.FC = memo((): JSX.Element => {
         >
           さんかくしかくまるぽっぷ
         </Typography>
-        <Grid container justifyContent="center" spacing={2}>
-          {renderOrder.map((key) => {
-            return voiceParts[key];
-          })}
-        </Grid>
+        <VoiceButtonContainer
+          renderOrder={renderOrder}
+          handleSankakuClick={handleSankakuClick}
+          handleShikakuClick={handleShikakuClick}
+          handleMaruClick={handleMaruClick}
+          handlePopClick={handlePopClick}
+          handleDesuClick={handleDesuClick}
+        />
         <Box
           sx={{
             position: "absolute",
@@ -327,52 +288,15 @@ export const MainPage: React.FC = memo((): JSX.Element => {
             margin: "0.5em 0.5em 0.5em 0.5em",
           }}
         >
-          <Grid container spacing={1}>
-            <Grid item>
-              {isAll ? (
-                <ActionButton
-                  icon={<Stop />}
-                  text="Stop"
-                  onClick={handleStopClick}
-                />
-              ) : (
-                <ActionButton
-                  icon={<PlayArrow />}
-                  text="Play All"
-                  onClick={handlePlayClick}
-                />
-              )}
-            </Grid>
-            <Grid item>
-              {isLoop ? (
-                <ActionButton
-                  icon={<Stop />}
-                  text="Stop"
-                  onClick={handleStopClick}
-                />
-              ) : (
-                <ActionButton
-                  icon={<Loop />}
-                  text="Play Loop"
-                  onClick={handleLoopClick}
-                />
-              )}
-            </Grid>
-            <Grid item>
-              <ActionButton
-                icon={<Shuffle />}
-                text="Shuffle"
-                onClick={handleShuffleClick}
-              />
-            </Grid>
-            <Grid item>
-              <ActionButton
-                icon={<RotateLeft />}
-                text="Reset"
-                onClick={handleResetClick}
-              />
-            </Grid>
-          </Grid>
+          <ActionButtonContainer
+            isAll={isAll}
+            isLoop={isLoop}
+            onLoopClick={handleLoopClick}
+            onPlayClick={handlePlayClick}
+            onResetClick={handleResetClick}
+            onShuffleClick={handleShuffleClick}
+            onStopClick={handleStopClick}
+          />
         </Box>
       </Box>
       <Box
@@ -384,17 +308,7 @@ export const MainPage: React.FC = memo((): JSX.Element => {
           margin: "0.5em 0.5em 0.5em 0.5em",
         }}
       >
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            <VolumeDown />
-          </Grid>
-          <Grid item xs>
-            <Slider value={volumeValue} onChange={handleVolumeChange} />
-          </Grid>
-          <Grid item>
-            <VolumeUp />
-          </Grid>
-        </Grid>
+        <VolumeSlider value={volumeValue} onChange={handleVolumeChange} />
       </Box>
       <Box
         sx={{

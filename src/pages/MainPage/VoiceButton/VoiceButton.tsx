@@ -1,4 +1,4 @@
-import React, { memo, MouseEventHandler } from "react";
+import { memo, MouseEventHandler } from "react";
 import { Button } from "@mui/material";
 
 export type Props = {
@@ -6,7 +6,7 @@ export type Props = {
   onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
 };
 
-export const VoiceButton: React.FC<Props> = memo(
+export const VoiceButton: React.VFC<Props> = memo(
   ({ text, onClick }: Props): JSX.Element => {
     return (
       <Button
