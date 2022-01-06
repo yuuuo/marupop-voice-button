@@ -227,12 +227,13 @@ export const MainPage: React.VFC = memo((): JSX.Element => {
         sx={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
           margin: "auto",
+          backgroundImage: `url(${background})`,
+          backgroundPosition: "50% 50%",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
         }}
-      >
-        <img src={background} />
-      </Box>
+      />
       <Box
         sx={{
           position: "absolute",
